@@ -5,19 +5,36 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gymjibi/constants.dart';
+import 'package:gymjibi/screens/collections/products/components/chip.dart';
 import 'package:gymjibi/screens/collections/products/components/tabs/continue_reservation.dart';
 import 'package:fdottedline_nullsafety/fdottedline__nullsafety.dart';
 import 'package:intl/intl.dart';
 import 'package:jdate/jdate.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
+import '../../../../../data/single_gym/model/response/respose_single_gym.dart';
+
 class Sans extends StatefulWidget {
   final String? category;
-
   final poolDetails;
+  final List<PriceTable> priceTable;
+  final String nameGym;
+  final String totalPrice;
+  final int disCount;
+  final String id;
 
-  const Sans({Key? key, required this.category, required this.poolDetails})
-      : super(key: key);
+  final List<AdditionalProducts> lsFeature;
+
+  Sans({
+    required this.category,
+    required this.poolDetails,
+    required this.lsFeature,
+    required this.totalPrice,
+    required this.disCount,
+    required this.nameGym,
+    required this.priceTable,
+    required this.id,
+  });
 
   @override
   State<Sans> createState() => _SansState();
@@ -47,6 +64,7 @@ class _SansState extends State<Sans> {
   }
 
   int indexSelect = 8;
+  String selectDayWeek = "";
 
   String getDayOfWeekInPersianFromPersianDate({required Jalali shamsiDate}) {
     int dayOfWeekIndex =
@@ -67,11 +85,20 @@ class _SansState extends State<Sans> {
 
   bool enable = true;
 
+  List<String> lsSat = [];
+  List<String> lsSun = [];
+  List<String> lsMon = [];
+  List<String> lsTue = [];
+  List<String> lsWed = [];
+  List<String> lsThu = [];
+  List<String> lsFri = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    selectDayWeek =
+        DateFormat.E().format(DateTime.now()).substring(0, 3).toLowerCase();
     DateTime now = DateTime.now();
     int weekday = now.weekday;
 
@@ -89,22 +116,37 @@ class _SansState extends State<Sans> {
       DateTime date = startDate.add(Duration(days: i));
       weekDates.add(DateTime.parse(DateFormat("yyyy-MM-dd").format(date)));
     }
+    for (int i = 0; i < widget.priceTable.length; i++) {
+      if (widget.priceTable[i].day == "sat") {
+        lsSat.add(widget.priceTable[i].period);
+      } else if (widget.priceTable[i].day == "sun") {
+        lsSun.add(widget.priceTable[i].period);
+      } else if (widget.priceTable[i].day == "mon") {
+        lsMon.add(widget.priceTable[i].period);
+      } else if (widget.priceTable[i].day == "tue") {
+        lsTue.add(widget.priceTable[i].period);
+      } else if (widget.priceTable[i].day == "wed") {
+        lsWed.add(widget.priceTable[i].period);
+      } else if (widget.priceTable[i].day == "thu") {
+        lsThu.add(widget.priceTable[i].period);
+      } else if (widget.priceTable[i].day == "fri") {
+        lsFri.add(widget.priceTable[i].period);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DateTime> timeList = [];
-
     DateTime currentTime = DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day, 6);
     DateTime endTime = DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day, 23, 30);
 
-    while (currentTime.isBefore(endTime)) {
-      timeList.add(currentTime);
-      currentTime = currentTime
-          .add(Duration(minutes: 90)); // فاصله زمانی 1.5 ساعت را اضافه می‌کنیم
-    }
+    // while (currentTime.isBefore(endTime)) {
+    //   timeList.add(currentTime);
+    //   currentTime = currentTime
+    //       .add(Duration(minutes: 90)); // فاصله زمانی 1.5 ساعت را اضافه می‌کنیم
+    // }
 
     return Padding(
       padding: const EdgeInsets.only(right: 20, left: 20, top: 0),
@@ -185,6 +227,36 @@ class _SansState extends State<Sans> {
                                       padding: EdgeInsets.only(right: 8.0.w),
                                       child: GestureDetector(
                                         onTap: () {
+                                          if (index == 0) {
+                                            setState(() {
+                                              selectDayWeek = 'sat';
+                                            });
+                                          } else if (index == 1) {
+                                            setState(() {
+                                              selectDayWeek = 'sun';
+                                            });
+                                          } else if (index == 2) {
+                                            setState(() {
+                                              selectDayWeek = 'mon';
+                                            });
+                                          } else if (index == 3) {
+                                            setState(() {
+                                              selectDayWeek = 'tue';
+                                            });
+                                          } else if (index == 4) {
+                                            setState(() {
+                                              selectDayWeek = 'wed';
+                                            });
+                                          } else if (index == 5) {
+                                            setState(() {
+                                              selectDayWeek = 'thu';
+                                            });
+                                          } else if (index == 6) {
+                                            setState(() {
+                                              selectDayWeek = 'fri';
+                                            });
+                                          }
+
                                           setState(() {
                                             indexSelect = index;
                                             currentDate = null;
@@ -321,51 +393,124 @@ class _SansState extends State<Sans> {
 
                       Padding(
                         padding: EdgeInsets.all(16),
-                        child: GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: timeList.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: 60.h,
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 8.0,
-                            mainAxisSpacing: 8.0,
-                          ),
-                          itemBuilder: (BuildContext context, index) {
-                            DateTime currentTime = timeList[index];
-                            String formattedTime =
-                                DateFormat('HH:mm').format(currentTime);
-                            print("mmd");
-                            print(timeList[index]);
-                            print("***");
-                            return GestureDetector(
-                              onTap: () {
-                                if (enable) {
-                                  Get.to(ContinueReservation.new);
-                                }
-                                /*showDialog(
-                            context: context,
-                            builder: (context) => ContinueReservation(),
-                          );*/
-                              },
-                              child: Container(
-                                width: 84.w,
-                                height: 60.h,
-                                decoration: BoxDecoration(
-                                  color: enable ? Colors.white : cf9,
-                                  border: Border.all(width: 1, color: cde),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Center(
-                                    child: Text(
-                                  enable ? "$formattedTime" : "گذشته",
-                                  style: bodyXL.copyWith(
-                                      color: enable ? black : ccb),
-                                )),
-                              ),
-                            );
-                          },
+                        child: Wrap(
+                          children: selectDayWeek == "sat"
+                              ? lsSun
+                                  .map((e) => ChipCustom(
+                                        enable: enable,
+                                        totalPrice: widget.totalPrice,
+                                        disCount: widget.disCount,
+                                        lsFeature: widget.lsFeature,
+                                        nameGym: widget.nameGym,
+                                        selectDateTime: selectDateTime,
+                                        text: e,
+                                        day: selectDayWeek,
+                                        id: widget.id,
+                                      ))
+                                  .toList()
+                              : selectDayWeek == "sun"
+                                  ? lsSun
+                                      .map((e) => ChipCustom(
+                                            enable: enable,
+                                            totalPrice: widget.totalPrice,
+                                            disCount: widget.disCount,
+                                            lsFeature: widget.lsFeature,
+                                            nameGym: widget.nameGym,
+                                            selectDateTime: selectDateTime,
+                                            text: e,
+                                            day: selectDayWeek,
+                                            id: widget.id,
+                                          ))
+                                      .toList()
+                                  : selectDayWeek == "mon"
+                                      ? lsSun
+                                          .map((e) => ChipCustom(
+                                                enable: enable,
+                                                totalPrice: widget.totalPrice,
+                                                disCount: widget.disCount,
+                                                lsFeature: widget.lsFeature,
+                                                nameGym: widget.nameGym,
+                                                selectDateTime: selectDateTime,
+                                                text: e,
+                                                day: selectDayWeek,
+                                                id: widget.id,
+                                              ))
+                                          .toList()
+                                      : selectDayWeek == "tue"
+                                          ? lsSun
+                                              .map((e) => ChipCustom(
+                                                    enable: enable,
+                                                    totalPrice:
+                                                        widget.totalPrice,
+                                                    disCount: widget.disCount,
+                                                    lsFeature: widget.lsFeature,
+                                                    nameGym: widget.nameGym,
+                                                    selectDateTime:
+                                                        selectDateTime,
+                                                    text: e,
+                                                    day: selectDayWeek,
+                                                    id: widget.id,
+                                                  ))
+                                              .toList()
+                                          : selectDayWeek == "wed"
+                                              ? lsSun
+                                                  .map((e) => ChipCustom(
+                                                        enable: enable,
+                                                        totalPrice:
+                                                            widget.totalPrice,
+                                                        disCount:
+                                                            widget.disCount,
+                                                        lsFeature:
+                                                            widget.lsFeature,
+                                                        nameGym: widget.nameGym,
+                                                        selectDateTime:
+                                                            selectDateTime,
+                                                        text: e,
+                                                        day: selectDayWeek,
+                                                        id: widget.id,
+                                                      ))
+                                                  .toList()
+                                              : selectDayWeek == "thu"
+                                                  ? lsSun
+                                                      .map((e) => ChipCustom(
+                                                            enable: enable,
+                                                            totalPrice: widget
+                                                                .totalPrice,
+                                                            disCount:
+                                                                widget.disCount,
+                                                            lsFeature: widget
+                                                                .lsFeature,
+                                                            nameGym:
+                                                                widget.nameGym,
+                                                            selectDateTime:
+                                                                selectDateTime,
+                                                            text: e,
+                                                            day: selectDayWeek,
+                                                            id: widget.id,
+                                                          ))
+                                                      .toList()
+                                                  : selectDayWeek == "fri"
+                                                      ? lsSun
+                                                          .map((e) =>
+                                                              ChipCustom(
+                                                                enable: enable,
+                                                                totalPrice: widget
+                                                                    .totalPrice,
+                                                                disCount: widget
+                                                                    .disCount,
+                                                                lsFeature: widget
+                                                                    .lsFeature,
+                                                                nameGym: widget
+                                                                    .nameGym,
+                                                                selectDateTime:
+                                                                    selectDateTime,
+                                                                text: e,
+                                                                day:
+                                                                    selectDayWeek,
+                                                                id: widget.id,
+                                                              ))
+                                                          .toList()
+                                                      : [],
                         ),
                       )
                     ],

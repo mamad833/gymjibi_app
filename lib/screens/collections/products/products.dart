@@ -218,7 +218,8 @@ class _ProductsState extends State<Products> {
                               ],
                             ))),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 58.h, horizontal: 20),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 58.h, horizontal: 20),
                       child: GestureDetector(
                         onTap: () {
                           //محمد
@@ -287,7 +288,7 @@ class _ProductsState extends State<Products> {
                     // ),
 
                     //جدول بندی رزرو
-                    state.response.gym .enabled
+                    state.response.gym.enabled
                         ? Listener(
                             onPointerMove: (details) {
                               if (physics ==
@@ -316,6 +317,16 @@ class _ProductsState extends State<Products> {
                                         category: state.response.gym.category,
                                         poolDetails: state
                                             .response.gym.poolDetails!.tableImg,
+                                        disCount:
+                                            state.response.gym.discountPrice,
+                                        lsFeature:
+                                            state.response.additionalProducts,
+                                        nameGym: state.response.gym.name,
+                                        totalPrice:
+                                            state.response.gym.priceStart,
+                                        priceTable:
+                                            state.response.gym.priceTable,
+                                        id:state.response.gym.id,
                                       )),
                                 ],
                               ),
@@ -426,13 +437,14 @@ class _ProductsState extends State<Products> {
                     state.response.gym.enabled
                         ? GestureDetector(
                             onTap: () {
-                              state.response.gym.category != "pool"?
-                              Scrollable.ensureVisible(
-                                _containerKey.currentContext!,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOut,
-                              )
-                              :Get.to(ContinueReservation.new);
+                              state.response.gym.category != "pool"
+                                  ? Scrollable.ensureVisible(
+                                      _containerKey.currentContext!,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.easeInOut,
+                                    )
+                                  : Get.to(ContinueReservation.new);
                             },
                             child: Container(
                                 padding: const EdgeInsets.symmetric(
