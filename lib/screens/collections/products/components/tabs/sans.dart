@@ -8,6 +8,7 @@ import 'package:gymjibi/constants.dart';
 import 'package:gymjibi/screens/collections/products/components/tabs/continue_reservation.dart';
 import 'package:fdottedline_nullsafety/fdottedline__nullsafety.dart';
 import 'package:intl/intl.dart';
+import 'package:jdate/jdate.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 class Sans extends StatefulWidget {
@@ -23,7 +24,8 @@ class Sans extends StatefulWidget {
 }
 
 class _SansState extends State<Sans> {
-String? currentDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
+  String? currentDate = DateFormat('yyyy/MM/dd').format(DateTime.now());
+  String selectDateTime = DateFormat("yyyy/MM/dd").format(DateTime.now());
 
   ScrollbarThemeData _customScrollbarTheme(Color color) {
     return ScrollbarThemeData(
@@ -36,7 +38,6 @@ String? currentDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
   ScrollController _scrollController = ScrollController();
   List<DateTime> weekDates = [];
 
-
   String convertMiladiToShamsi({required int month, required int day}) {
     DateTime miladiDate = DateTime(DateTime.now().year, month, day);
 
@@ -44,7 +45,8 @@ String? currentDate=DateFormat('yyyy/MM/dd').format(DateTime.now());
 
     return '${jalaliDate.month}/${jalaliDate.day}';
   }
-int indexSelect=8;
+
+  int indexSelect = 8;
 
   String getDayOfWeekInPersianFromPersianDate({required Jalali shamsiDate}) {
     int dayOfWeekIndex =
@@ -63,10 +65,13 @@ int indexSelect=8;
     return persianDaysOfWeek[dayOfWeekIndex];
   }
 
+  bool enable = true;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     DateTime now = DateTime.now();
     int weekday = now.weekday;
 
@@ -176,16 +181,35 @@ int indexSelect=8;
                                   shrinkWrap: true,
                                   itemCount: 7,
                                   itemBuilder: (context, index) {
-
                                     return Padding(
                                       padding: EdgeInsets.only(right: 8.0.w),
                                       child: GestureDetector(
                                         onTap: () {
+                                          setState(() {
+                                            indexSelect = index;
+                                            currentDate = null;
+                                          });
+                                          selectDateTime =
+                                              DateFormat('yyyy/MM/dd')
+                                                  .format(weekDates[index]);
 
-                                       setState(() {
-                                         indexSelect=index;
-                                         currentDate=null;
-                                       });
+                                          DateFormat format =
+                                              DateFormat('yyyy/MM/dd');
+                                          DateTime dateTime =
+                                              format.parse(selectDateTime);
+                                          if (dateTime
+                                              .isBefore(DateTime.now())) {
+                                            enable = false;
+                                          } else {
+                                            enable = true;
+                                          }
+                                          if (dateTime ==
+                                              DateTime(
+                                                  DateTime.now().year,
+                                                  DateTime.now().month,
+                                                  DateTime.now().day)) {
+                                            enable = true;
+                                          }
                                         },
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
@@ -193,12 +217,21 @@ int indexSelect=8;
                                           height: 65.h,
                                           width: 96.w,
                                           decoration: BoxDecoration(
-                                              color: indexSelect==index||currentDate==DateFormat('yyyy/MM/dd').format(weekDates[index])
+                                              color: indexSelect == index ||
+                                                      currentDate ==
+                                                          DateFormat('yyyy/MM/dd').format(
+                                                              weekDates[index])
                                                   ? cMain.withOpacity(.05)
                                                   : null,
                                               border: Border.all(
                                                   width: 1,
-                                                  color: indexSelect==index||currentDate==DateFormat('yyyy/MM/dd').format(weekDates[index])
+                                                  color: indexSelect == index ||
+                                                          currentDate ==
+                                                              DateFormat(
+                                                                      'yyyy/MM/dd')
+                                                                  .format(
+                                                                      weekDates[
+                                                                          index])
                                                       ? b02
                                                       : cde),
                                               borderRadius:
@@ -213,7 +246,14 @@ int indexSelect=8;
                                                         Jalali.fromDateTime(
                                                             weekDates[index])),
                                                 style: bodyLG.copyWith(
-                                                    color: indexSelect==index||currentDate==DateFormat('yyyy/MM/dd').format(weekDates[index])
+                                                    color: indexSelect ==
+                                                                index ||
+                                                            currentDate ==
+                                                                DateFormat(
+                                                                        'yyyy/MM/dd')
+                                                                    .format(
+                                                                        weekDates[
+                                                                            index])
                                                         ? cMain
                                                         : black),
                                               ),
@@ -229,7 +269,14 @@ int indexSelect=8;
                                                   ),
                                                 ),
                                                 style: bodySMbl.copyWith(
-                                                    color: indexSelect==index||currentDate==DateFormat('yyyy/MM/dd').format(weekDates[index])
+                                                    color: indexSelect ==
+                                                                index ||
+                                                            currentDate ==
+                                                                DateFormat(
+                                                                        'yyyy/MM/dd')
+                                                                    .format(
+                                                                        weekDates[
+                                                                            index])
                                                         ? cMain
                                                         : black),
                                               ),
@@ -289,11 +336,14 @@ int indexSelect=8;
                             DateTime currentTime = timeList[index];
                             String formattedTime =
                                 DateFormat('HH:mm').format(currentTime);
-
+                            print("mmd");
+                            print(timeList[index]);
+                            print("***");
                             return GestureDetector(
                               onTap: () {
-
-                                Get.to(ContinueReservation.new);
+                                if (enable) {
+                                  Get.to(ContinueReservation.new);
+                                }
                                 /*showDialog(
                             context: context,
                             builder: (context) => ContinueReservation(),
@@ -303,13 +353,15 @@ int indexSelect=8;
                                 width: 84.w,
                                 height: 60.h,
                                 decoration: BoxDecoration(
+                                  color: enable ? Colors.white : cf9,
                                   border: Border.all(width: 1, color: cde),
                                   borderRadius: BorderRadius.circular(16.r),
                                 ),
                                 child: Center(
                                     child: Text(
-                                  "${formattedTime} ",
-                                  style: bodyXL,
+                                  enable ? "$formattedTime" : "گذشته",
+                                  style: bodyXL.copyWith(
+                                      color: enable ? black : ccb),
                                 )),
                               ),
                             );
