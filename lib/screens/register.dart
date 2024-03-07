@@ -11,6 +11,7 @@ import 'package:gymjibi/screens/textFiled.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/sign_in_api/logic/state/auth_login_state.dart';
 import '../data/sign_in_api/logic/view_model/auth_login_view_model.dart';
@@ -98,12 +99,14 @@ class Register {
                   bloc:signInViewModel,
                   builder: (context, state) {
                     return   MyCustomButton(
+                      height: 58.h,
                       title: "تایید",
                       loading: state is LoginLoadingState,
                       width: MediaQuery.of(context).size.width,
                       borderRadius: 8,
                       onTap: () {
-                        // signInViewModel.login(phone: controllerPhone.text, pass:cont)
+                        Navigator.pop(context);
+                        bottomSheetConfirmCode(context);
                       },
                     );
                   },
@@ -242,6 +245,13 @@ class Register {
   }
 
   static void bottomSheetNameAndPass(context) {
+    _launchURL() async {
+      final Uri url = Uri.parse('https://gymjibi.com/terms');
+      if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+      }
+    }
+
     final createPassword = ViewModelEditFiled();
     // final createReePassword = ViewModelEditFiled();
 
@@ -288,7 +298,7 @@ class Register {
                 const SizedBox(
                   height: 24,
                 ),
-                Row(
+/*                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     BlocBuilder(
@@ -386,7 +396,8 @@ class Register {
                 ),
                 const SizedBox(
                   height: 24,
-                ),
+                ),*/
+            // نوع ٍثبت نام (کاربر معمولی و مجموعه دار)
                 BlocBuilder(
                     bloc: createPassword,
                     builder: (context, state) {
@@ -436,7 +447,10 @@ class Register {
                             textAlign: TextAlign.justify,
                           ),
                           GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                _launchURL;
+                                // launchUrl(Uri.parse('https://gymjibi.com/terms'));
+                              },
                               child: Text(
                                 " قوانین و مقررات ",
                                 style: bodyXSb,

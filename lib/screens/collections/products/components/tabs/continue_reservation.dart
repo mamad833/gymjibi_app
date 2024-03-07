@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gymjibi/config/hive_service/hive_service.dart';
 import 'package:gymjibi/constants.dart';
 import 'package:get/get.dart';
 import 'package:gymjibi/data/booked_api/logic/state/booked_state.dart';
 import 'package:gymjibi/data/booked_api/logic/view_model/booked_view_model.dart';
 import 'package:gymjibi/helper/custom_button.dart';
+import 'package:gymjibi/screens/collections/products/components/tabs/success_reserve.dart';
 import 'package:gymjibi/screens/textFiled.dart';
 
 import 'package:intl/intl.dart';
@@ -15,6 +17,7 @@ import 'package:jdate/jdate.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 import '../../../../../data/single_gym/model/response/respose_single_gym.dart';
+import '../../../../register.dart';
 
 class ContinueReservation extends StatefulWidget {
   final String date;
@@ -36,7 +39,6 @@ class ContinueReservation extends StatefulWidget {
     required this.totalPrice,
     required this.lsFeature,
     required this.time,
-
     required this.period,
     required this.day,
     required this.id,
@@ -105,13 +107,30 @@ class _ContinueReservationState extends State<ContinueReservation> {
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Text(convertMiladiToShamsi(
-                      month: format.parse(widget.date).month,
-                      day: format.parse(widget.date).day)),
-                  Text(widget.time),
-                ],
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: cf9
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset("assets/icons/clock.svg"),
+                    SizedBox(width: 5,),
+                    Text(widget.time.replaceAll(":0", ":00"),style: bodyLG.apply(color: secondary),),
+                    Spacer(),
+                    Text(datePersian(day: widget.day),style: bodySM.apply(color: c75)),
+                    SizedBox(width: 10,),
+                    Text(convertMiladiToShamsi(
+                      year: format.parse(widget.date).year,
+                        month: format.parse(widget.date).month,
+                        day: format.parse(widget.date).day),
+                      style: bodyLG.apply(color: c75),),
+
+                  ],
+                ),
               ),
               SizedBox(
                 height: 32,
@@ -487,72 +506,61 @@ class _ContinueReservationState extends State<ContinueReservation> {
         ),
         bottomNavigationBar: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  // Get.back();
-                  print(widget.lsFeature.length);
-                },
-                child: Container(
-                  height: 40,
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Center(
-                      child: Text(
-                    "بستن",
-                    style: buttonSM,
-                  )),
-                ),
-              ),
-              // GestureDetector(
-              //   onTap: () {
-              //
-              //   },
-              //   child: Container(
-              //     // width: 90,
-              //     height: 40,
-              //     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              //     decoration: BoxDecoration(
-              //       color: cMain,
-              //       borderRadius: BorderRadius.circular(8),
-              //     ),
-              //     child: Center(
-              //         child: Text(
-              //       "",
-              //       style: buttonSMw,
-              //     )),
-              //   ),
-              // ),
-              BlocBuilder(
-                  bloc: bookedViewModel,
-                  builder: (context, state) {
-                    return MyCustomButton(
-                      onTap: () {
-                        bookedViewModel.booked(
-                            id: widget.id,
-                            day: widget.day,
-                            date: widget.date,
-                            period: widget.period,
-                            personsCount:countPeople,
-                            additionalProduct: widget.lsFeature);
-                      },
-                      title: "تایید و ادامه",
-                      loading: state is BookedLoadingState,
-                    );
-                  }),
-            ],
-          ),
+          child: BlocConsumer(
+              bloc: bookedViewModel,
+              builder: (context, state) {
+                return MyCustomButton(
+                  height: 58.h,
+                  onTap: () {
+                    if(HiveServices.getToken==null){
+                      Register.bottomSheetEnterNumber(context);
+                    }else{
+                      bookedViewModel.booked(
+                          id: widget.id,
+                          day: widget.day,
+                          date: widget.date,
+                          period: widget.period,
+                          personsCount: countPeople,
+                          additionalProduct: widget.lsFeature);
+                    }
+                  },
+                  title: "تایید و ادامه",
+                  loading: state is BookedLoadingState,
+                );
+              }, listener: (BuildContext context, Object? state) {
+                if(state is BookedSuccessState){Get.offAll(SuccessReserve.new);}
+                if(state is BookedFailState){}
+          },),
         ),
       ),
     );
   }
 
-  String convertMiladiToShamsi({required int month, required int day}) {
-    DateTime miladiDate = DateTime(DateTime.now().year, month, day);
+  String convertMiladiToShamsi({required int year,required int month, required int day}) {
+    DateTime miladiDate = DateTime(year, month, day);
 
     Jalali jalaliDate = Jalali.fromDateTime(miladiDate);
 
-    return '${jalaliDate.month}/${jalaliDate.day}';
+    // return '${jalaliDate.year} / ${jalaliDate.month} / ${jalaliDate.day}';
+    return '${jalaliDate.day} / ${jalaliDate.month} / ${jalaliDate.year}';
+  }
+
+  String datePersian({required String day}){
+    if(day=="sat"){
+      return "شنبه";
+    } else if(day=="sun"){
+      return "یک‌شنبه";
+    }  else if(day=="mon"){
+      return "دوشنبه";
+    } else if(day=="tue"){
+      return "سه‌شنبه";
+    } else if(day=="wed"){
+      return "چهار‌شنبه";
+    } else if(day=="thu"){
+      return "پنج‌شنبه";
+    } else if(day=="fri"){
+      return "جمعه";
+    }
+    return "mosi";
   }
 }
