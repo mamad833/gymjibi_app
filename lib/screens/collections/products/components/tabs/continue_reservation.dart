@@ -248,122 +248,123 @@ class _ContinueReservationState extends State<ContinueReservation> {
               SizedBox(
                 height: 32,
               ),
-              Text(
-                "ویژگی های اضافه",
-                style: h5,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: ListView.builder(
-                    itemCount: widget.lsFeature.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 10),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Container(
-                              width: 120,
-                              height: 120,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 6),
-                              decoration: BoxDecoration(
-                                  color: cf9,
-                                  borderRadius: BorderRadius.circular(16)),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "تعداد${widget.lsFeature[index].title}",
-                                    style: h6,
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                        color: white,
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            print(countItem![index]);
-                                            setState(() {
-                                              if (countItem![index] > 0) {
-                                                countItem![index]--;
-                                                totalPrice -= ((1 *
-                                                    widget.lsFeature[index]
-                                                        .price));
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 26,
-                                            width: 26,
-                                            decoration: BoxDecoration(
-                                                color: (countItem![index] > 0)
-                                                    ? cMain.withOpacity(0.5)
-                                                    : cMain.withOpacity(0.35),
-                                                borderRadius:
-                                                    BorderRadius.circular(8)),
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.remove_rounded,
-                                              color: (countItem![index] > 0)
-                                                  ? cMain
-                                                  : cMain.withOpacity(0.6),
-                                            )),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${countItem![index]}",
-                                          style: bodyXL,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              countItem![index]++;
-                                              totalPrice += (1 *
-                                                  widget
-                                                      .lsFeature[index].price);
-
-                                              //totalPrice = (priceItemPeople*countPeople)+totalPrice;
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 26,
-                                            width: 26,
-                                            decoration: BoxDecoration(
-                                                color: cMain.withOpacity(0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(8)),
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.add_rounded,
-                                              color: cMain,
-                                            )),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-              ),
+              // Text(
+              //   "ویژگی های اضافه",
+              //   style: h5,
+              // ),
+              // SizedBox(
+              //   height: 15,
+              // ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   height: 200,
+              //   child: ListView.builder(
+              //       itemCount: widget.lsFeature.length,
+              //       scrollDirection: Axis.horizontal,
+              //       itemBuilder: (context, index) {
+              //         return Padding(
+              //           padding: const EdgeInsets.only(right: 10, left: 10),
+              //           child: Column(
+              //             children: [
+              //               SizedBox(
+              //                 height: 8,
+              //               ),
+              //               Container(
+              //                 width: 120,
+              //                 height: 120,
+              //                 padding: EdgeInsets.symmetric(
+              //                     horizontal: 6, vertical: 6),
+              //                 decoration: BoxDecoration(
+              //                     color: cf9,
+              //                     borderRadius: BorderRadius.circular(16)),
+              //                 child: Column(
+              //                   mainAxisAlignment:
+              //                       MainAxisAlignment.spaceBetween,
+              //                   children: [
+              //                     Text(
+              //                       "تعداد${widget.lsFeature[index].title}",
+              //                       style: h6,
+              //                     ),
+              //                     Container(
+              //                       padding: EdgeInsets.all(4),
+              //                       decoration: BoxDecoration(
+              //                           color: white,
+              //                           borderRadius: BorderRadius.circular(8)),
+              //                       child: Row(
+              //                         mainAxisAlignment:
+              //                             MainAxisAlignment.spaceBetween,
+              //                         children: [
+              //                           GestureDetector(
+              //                             onTap: () {
+              //                               print(countItem![index]);
+              //                               setState(() {
+              //                                 if (countItem![index] > 0) {
+              //                                   countItem![index]--;
+              //                                   totalPrice -= ((1 *
+              //                                       widget.lsFeature[index]
+              //                                           .price));
+              //                                 }
+              //                               });
+              //                             },
+              //                             child: Container(
+              //                               height: 26,
+              //                               width: 26,
+              //                               decoration: BoxDecoration(
+              //                                   color: (countItem![index] > 0)
+              //                                       ? cMain.withOpacity(0.5)
+              //                                       : cMain.withOpacity(0.35),
+              //                                   borderRadius:
+              //                                       BorderRadius.circular(8)),
+              //                               child: Center(
+              //                                   child: Icon(
+              //                                 Icons.remove_rounded,
+              //                                 color: (countItem![index] > 0)
+              //                                     ? cMain
+              //                                     : cMain.withOpacity(0.6),
+              //                               )),
+              //                             ),
+              //                           ),
+              //                           Text(
+              //                             "${countItem![index]}",
+              //                             style: bodyXL,
+              //                           ),
+              //                           GestureDetector(
+              //                             onTap: () {
+              //                               setState(() {
+              //                                 countItem![index]++;
+              //                                 totalPrice += (1 *
+              //                                     widget
+              //                                         .lsFeature[index].price);
+              //
+              //                                 //totalPrice = (priceItemPeople*countPeople)+totalPrice;
+              //                               });
+              //                             },
+              //                             child: Container(
+              //                               height: 26,
+              //                               width: 26,
+              //                               decoration: BoxDecoration(
+              //                                   color: cMain.withOpacity(0.5),
+              //                                   borderRadius:
+              //                                       BorderRadius.circular(8)),
+              //                               child: Center(
+              //                                   child: Icon(
+              //                                 Icons.add_rounded,
+              //                                 color: cMain,
+              //                               )),
+              //                             ),
+              //                           ),
+              //                         ],
+              //                       ),
+              //                     ),
+              //                   ],
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         );
+              //       }),
+              // ),
+              ///
               // Padding(
               //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 32),
               //   child: Column(

@@ -326,7 +326,7 @@ class _ProductsState extends State<Products> {
                                             state.response.gym.priceStart,
                                         priceTable:
                                             state.response.gym.priceTable,
-                                        id:state.response.gym.id,
+                                        id:state.response.gym.id, booked: state.response.bookeds,
                                       )),
                                 ],
                               ),

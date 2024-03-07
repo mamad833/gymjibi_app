@@ -28,7 +28,7 @@ class BookedViewModel extends Cubit<BookedBaseState> {
         "date": date,
         "period": period,
         "persons_count": personsCount,
-        "additional_product": additionalProduct!.map((e)=>e.toJson()).toList() ?? [],
+        // "additional_product": additionalProduct!.map((e)=>e.toJson()).toList() ?? [],
         //"discount_code": "test"
       });
 

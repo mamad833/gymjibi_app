@@ -22,6 +22,7 @@ class Sans extends StatefulWidget {
   final String totalPrice;
   final int disCount;
   final String id;
+  final List<Bookeds> booked;
 
   final List<AdditionalProducts> lsFeature;
 
@@ -34,6 +35,7 @@ class Sans extends StatefulWidget {
     required this.nameGym,
     required this.priceTable,
     required this.id,
+    required this.booked,
   });
 
   @override
@@ -85,13 +87,14 @@ class _SansState extends State<Sans> {
 
   bool enable = true;
 
-  List<String> lsSat = [];
-  List<String> lsSun = [];
-  List<String> lsMon = [];
-  List<String> lsTue = [];
-  List<String> lsWed = [];
-  List<String> lsThu = [];
-  List<String> lsFri = [];
+  // List<String> lsSat = [];
+  // List<String> lsSun = [];
+  // List<String> lsMon = [];
+  // List<String> lsTue = [];
+  // List<String> lsWed = [];
+  // List<String> lsThu = [];
+  // List<String> lsFri = [];
+  List<CustomPeriod> lsDay = [];
 
   @override
   void initState() {
@@ -117,20 +120,20 @@ class _SansState extends State<Sans> {
       weekDates.add(DateTime.parse(DateFormat("yyyy-MM-dd").format(date)));
     }
     for (int i = 0; i < widget.priceTable.length; i++) {
-      if (widget.priceTable[i].day == "sat") {
-        lsSat.add(widget.priceTable[i].period);
-      } else if (widget.priceTable[i].day == "sun") {
-        lsSun.add(widget.priceTable[i].period);
-      } else if (widget.priceTable[i].day == "mon") {
-        lsMon.add(widget.priceTable[i].period);
-      } else if (widget.priceTable[i].day == "tue") {
-        lsTue.add(widget.priceTable[i].period);
-      } else if (widget.priceTable[i].day == "wed") {
-        lsWed.add(widget.priceTable[i].period);
-      } else if (widget.priceTable[i].day == "thu") {
-        lsThu.add(widget.priceTable[i].period);
-      } else if (widget.priceTable[i].day == "fri") {
-        lsFri.add(widget.priceTable[i].period);
+      lsDay.add(CustomPeriod(
+          day: widget.priceTable[i].day,
+          period: widget.priceTable[i].period,
+          status: false));
+    }
+    for (int x = 0; x < lsDay.length; x++) {
+      for (int j = 0; j < widget.booked.length; j++) {
+        if (lsDay[x].day == widget.booked[j].day &&
+            lsDay[x].period == widget.booked[j].period) {
+          lsDay[x]=CustomPeriod(
+              day: lsDay[x].day,
+              period: lsDay[x].period,
+              status: true);
+        }
       }
     }
   }
@@ -154,9 +157,15 @@ class _SansState extends State<Sans> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            "سانس ها",
-            style: h4,
+          GestureDetector(
+            onTap: () {
+              print(lsDay[0].day);
+              print(widget.priceTable.length);
+            },
+            child: Text(
+              "سانس ها",
+              style: h4,
+            ),
           ),
           SizedBox(
             height: 2.h,
@@ -394,123 +403,22 @@ class _SansState extends State<Sans> {
                       Padding(
                         padding: EdgeInsets.all(16),
                         child: Wrap(
-                          children: selectDayWeek == "sat"
-                              ? lsSun
-                                  .map((e) => ChipCustom(
-                                        enable: enable,
-                                        totalPrice: widget.totalPrice,
-                                        disCount: widget.disCount,
-                                        lsFeature: widget.lsFeature,
-                                        nameGym: widget.nameGym,
-                                        selectDateTime: selectDateTime,
-                                        text: e,
-                                        day: selectDayWeek,
-                                        id: widget.id,
-                                      ))
-                                  .toList()
-                              : selectDayWeek == "sun"
-                                  ? lsSun
-                                      .map((e) => ChipCustom(
-                                            enable: enable,
-                                            totalPrice: widget.totalPrice,
-                                            disCount: widget.disCount,
-                                            lsFeature: widget.lsFeature,
-                                            nameGym: widget.nameGym,
-                                            selectDateTime: selectDateTime,
-                                            text: e,
-                                            day: selectDayWeek,
-                                            id: widget.id,
-                                          ))
-                                      .toList()
-                                  : selectDayWeek == "mon"
-                                      ? lsSun
-                                          .map((e) => ChipCustom(
-                                                enable: enable,
-                                                totalPrice: widget.totalPrice,
-                                                disCount: widget.disCount,
-                                                lsFeature: widget.lsFeature,
-                                                nameGym: widget.nameGym,
-                                                selectDateTime: selectDateTime,
-                                                text: e,
-                                                day: selectDayWeek,
-                                                id: widget.id,
-                                              ))
-                                          .toList()
-                                      : selectDayWeek == "tue"
-                                          ? lsSun
-                                              .map((e) => ChipCustom(
-                                                    enable: enable,
-                                                    totalPrice:
-                                                        widget.totalPrice,
-                                                    disCount: widget.disCount,
-                                                    lsFeature: widget.lsFeature,
-                                                    nameGym: widget.nameGym,
-                                                    selectDateTime:
-                                                        selectDateTime,
-                                                    text: e,
-                                                    day: selectDayWeek,
-                                                    id: widget.id,
-                                                  ))
-                                              .toList()
-                                          : selectDayWeek == "wed"
-                                              ? lsSun
-                                                  .map((e) => ChipCustom(
-                                                        enable: enable,
-                                                        totalPrice:
-                                                            widget.totalPrice,
-                                                        disCount:
-                                                            widget.disCount,
-                                                        lsFeature:
-                                                            widget.lsFeature,
-                                                        nameGym: widget.nameGym,
-                                                        selectDateTime:
-                                                            selectDateTime,
-                                                        text: e,
-                                                        day: selectDayWeek,
-                                                        id: widget.id,
-                                                      ))
-                                                  .toList()
-                                              : selectDayWeek == "thu"
-                                                  ? lsSun
-                                                      .map((e) => ChipCustom(
-                                                            enable: enable,
-                                                            totalPrice: widget
-                                                                .totalPrice,
-                                                            disCount:
-                                                                widget.disCount,
-                                                            lsFeature: widget
-                                                                .lsFeature,
-                                                            nameGym:
-                                                                widget.nameGym,
-                                                            selectDateTime:
-                                                                selectDateTime,
-                                                            text: e,
-                                                            day: selectDayWeek,
-                                                            id: widget.id,
-                                                          ))
-                                                      .toList()
-                                                  : selectDayWeek == "fri"
-                                                      ? lsSun
-                                                          .map((e) =>
-                                                              ChipCustom(
-                                                                enable: enable,
-                                                                totalPrice: widget
-                                                                    .totalPrice,
-                                                                disCount: widget
-                                                                    .disCount,
-                                                                lsFeature: widget
-                                                                    .lsFeature,
-                                                                nameGym: widget
-                                                                    .nameGym,
-                                                                selectDateTime:
-                                                                    selectDateTime,
-                                                                text: e,
-                                                                day:
-                                                                    selectDayWeek,
-                                                                id: widget.id,
-                                                              ))
-                                                          .toList()
-                                                      : [],
+                          children: lsDay
+                              .map((e) => e.day == selectDayWeek
+                                  ? ChipCustom(
+                                      enable: enable,
+                                      totalPrice: widget.totalPrice,
+                                      disCount: widget.disCount,
+                                      lsFeature: widget.lsFeature,
+                                      nameGym: widget.nameGym,
+                                      selectDateTime: selectDateTime,
+                                      text: e.period,
+                                      day: selectDayWeek,
+                                      id: widget.id,
+                                      status: e.status,
+                                    )
+                                  : SizedBox())
+                              .toList(),
                         ),
                       )
                     ],
@@ -534,4 +442,12 @@ class _SansState extends State<Sans> {
       ),
     );
   }
+}
+
+class CustomPeriod {
+  final String day;
+  final String period;
+  final bool status;
+
+  CustomPeriod({required this.day, required this.period, required this.status});
 }

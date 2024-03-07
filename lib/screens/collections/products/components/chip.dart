@@ -15,9 +15,9 @@ class ChipCustom extends StatefulWidget {
   final List<AdditionalProducts> lsFeature;
   final bool enable;
   final String text;
-
   final String id;
   final String day;
+  final bool status;
 
 
   const ChipCustom({
@@ -28,9 +28,8 @@ class ChipCustom extends StatefulWidget {
     required this.nameGym,
     required this.selectDateTime,
     required this.text,
-
     required this.day,
-    required this.id,
+    required this.id, required this.status,
   });
 
   @override
@@ -44,7 +43,7 @@ class _ChipCustomState extends State<ChipCustom> {
       padding: const EdgeInsets.only(right: 7, bottom: 7),
       child: GestureDetector(
         onTap: () {
-          if (widget.enable) {
+          if (widget.enable&&widget.status==false) {
             Get.to(
               ContinueReservation(
                 date: widget.selectDateTime,
@@ -75,9 +74,9 @@ class _ChipCustomState extends State<ChipCustom> {
           child: Center(
               child: Text(
             widget.enable
-                ? widget.text.substring(0, 5).replaceAll(" -", "0")
+                ? widget.status?"رزرو شده":widget.text.substring(0, 5).replaceAll(" -", "0")
                 : "گذشته",
-            style: bodyXL.copyWith(color: widget.enable ? black : ccb),
+            style: bodyXL.copyWith(color: widget.enable ? widget.status?Colors.red:black : ccb),
           )),
         ),
       ),
