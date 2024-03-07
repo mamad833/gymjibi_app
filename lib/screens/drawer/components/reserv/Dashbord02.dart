@@ -7,6 +7,7 @@ import 'package:gymjibi/screens/drawer/components/reserv/reserv.dart';
 import 'package:gymjibi/screens/drawer/drawer.dart';
 import 'package:gymjibi/navigation.dart';
 
+import '../../../../data/get_bookedes_user/bloc/view_model/get_bookeds_user_view_model.dart';
 import '../../../dashbord/components/profile.dart';
 
 
@@ -17,7 +18,6 @@ class Dashbord02 extends StatefulWidget{
 }
 
 class _Dashbord02State extends State<Dashbord02> {
-
 
       @override
   Widget build(BuildContext context) {

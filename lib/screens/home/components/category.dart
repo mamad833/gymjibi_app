@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gymjibi/config/hive_service/hive_service.dart';
 import 'package:gymjibi/constants.dart';
 
 class Category extends StatelessWidget {
@@ -57,20 +58,25 @@ class Category extends StatelessWidget {
               Text("استخر",style: TextStyle(fontFamily: dana,),),
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(
-                width: 105.w,
-                height: 105.r,
-                fit: BoxFit.cover,
-                image: AssetImage(
-                  "assets/images/home/grass.png",
+          GestureDetector(
+            onTap: (){
+              print(HiveServices.getToken);
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(
+                  width: 105.w,
+                  height: 105.r,
+                  fit: BoxFit.cover,
+                  image: AssetImage(
+                    "assets/images/home/grass.png",
+                  ),
                 ),
-              ),
-              SizedBox(height: 5.h,),
-              Text("چمن",style: TextStyle(fontFamily: dana,),),
-            ],
+                SizedBox(height: 5.h,),
+                Text("چمن",style: TextStyle(fontFamily: dana,),),
+              ],
+            ),
           ),
         ],
       ),

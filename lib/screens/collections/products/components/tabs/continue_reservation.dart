@@ -515,6 +515,7 @@ class _ContinueReservationState extends State<ContinueReservation> {
                     if(HiveServices.getToken==null){
                       Register.bottomSheetEnterNumber(context);
                     }else{
+                      print("mmmmmmmmmmmmmmmmmmmmmmmmm");
                       bookedViewModel.booked(
                           id: widget.id,
                           day: widget.day,

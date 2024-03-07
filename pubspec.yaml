@@ -74,6 +74,7 @@ dependencies:
   skeletonizer: ^0.8.0
   persian_number_utility: ^1.1.4
   url_launcher: ^6.1.14
+  flutter_styled_toast: ^2.2.1
 #  intl: ^0.18.1
 
 

@@ -4,17 +4,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gymjibi/bloc/change_state.dart';
 import 'package:gymjibi/bloc/view_model_change.dart';
 import 'package:gymjibi/constants.dart';
+import 'package:gymjibi/data/sign_up_api/logic/state/auth_register_state.dart';
 import 'package:gymjibi/helper/custom_button.dart';
+import 'package:gymjibi/screens/home/components/custom_toast.dart';
 import 'package:gymjibi/screens/home/home_screen.dart';
 import 'package:gymjibi/screens/login.dart';
 import 'package:gymjibi/screens/textFiled.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:bloc/bloc.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../data/sign_in_api/logic/state/auth_login_state.dart';
+// import '../data/sign_in_api/logic/state/auth_login_state.dart';
 import '../data/sign_in_api/logic/view_model/auth_login_view_model.dart';
+import '../data/sign_up_api/logic/view_model/auth_login_validate_view_model.dart';
 
 class Register {
   static final TextEditingController controllerPhone = TextEditingController();
@@ -22,9 +25,11 @@ class Register {
       TextEditingController();
   static final TextEditingController controllerCreatePass =
       TextEditingController();
+  static final TextEditingController nameEtc = TextEditingController();
 
   static void bottomSheetEnterNumber(context) {
-    final signInViewModel=LoginViewModel();
+    final sendPhoneViewModel = SignUpSendPhoneViewModel();
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -88,7 +93,7 @@ class Register {
                       ],
                     ),
                   ),
-                  labelText: "شماره موبایل",
+                  labelText: "شماره موبایل مثال *******0913",
                   textAlign: TextAlign.left,
                   inputTextDirection: TextDirection.ltr,
                 ),
@@ -96,24 +101,28 @@ class Register {
                   height: 24,
                 ),
                 BlocConsumer(
-                  bloc:signInViewModel,
+                  bloc: sendPhoneViewModel,
                   builder: (context, state) {
-                    return   MyCustomButton(
+                    return MyCustomButton(
                       height: 58.h,
                       title: "تایید",
-                      loading: state is LoginLoadingState,
+                      loading: state is SignUpSendPhoneLoadingState,
                       width: MediaQuery.of(context).size.width,
                       borderRadius: 8,
                       onTap: () {
-                        Navigator.pop(context);
-                        bottomSheetConfirmCode(context);
+                        sendPhoneViewModel.signUp(phone: controllerPhone.text);
                       },
                     );
                   },
                   listener: (context, state) {
-                    if(state is LoginSuccessState){
+                    if (state is SignUpSendPhoneSuccessState) {
                       Navigator.pop(context);
-                      bottomSheetConfirmCode(context);
+                      bottomSheetConfirmCode(context, controllerPhone.text);
+                      controllerPhone.clear();
+                    }
+                    if (state is SignUpSendPhoneFailState) {
+                      // sendPhoneViewModel.emit(SignUpSendPhoneInitialState());
+                      print(state.message);
                     }
                   },
                 ),
@@ -140,7 +149,8 @@ class Register {
     );
   }
 
-  static void bottomSheetConfirmCode(context) {
+  static void bottomSheetConfirmCode(context, String phone) {
+    final sendCodeViewModel = SignUpSendCodeViewModel();
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -203,23 +213,32 @@ class Register {
                 const SizedBox(
                   height: 24,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Get.to(()=>Rigester002());
-                    Navigator.pop(context);
-                    bottomSheetNameAndPass(context);
+                BlocConsumer(
+                  bloc: sendCodeViewModel,
+                  builder: (context, state) {
+                    return MyCustomButton(
+                      height: 58.h,
+                      title: "تایید و ادامه",
+                      loading: state is SignUpSendCodeLoadingState,
+                      width: MediaQuery.of(context).size.width,
+                      borderRadius: 8,
+                      onTap: () {
+                        sendCodeViewModel.signUpCode(
+                            phone: phone, code: controllerConfirmCode.text);
+                      },
+                    );
                   },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: cMain,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8))),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    width: double.infinity,
-                    child: Center(
-                      child: Text("تایید و ادامه", style: buttonLG),
-                    ),
-                  ),
+                  listener: (context, state) {
+                    if (state is SignUpSendCodeSuccessState) {
+                      Navigator.pop(context);
+                      bottomSheetNameAndPass(context, state.token);
+                      controllerConfirmCode.clear();
+                    }
+                    if (state is SignUpSendCodeFailState) {
+                      // sendPhoneViewModel.emit(SignUpSendPhoneInitialState());
+                      print(state.message);
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 16,
@@ -244,7 +263,8 @@ class Register {
     );
   }
 
-  static void bottomSheetNameAndPass(context) {
+  static void bottomSheetNameAndPass(context, String token) {
+    final signUpFinish = SignUpSendInfoViewModel();
     _launchURL() async {
       final Uri url = Uri.parse('https://gymjibi.com/terms');
       if (!await launchUrl(url)) {
@@ -397,7 +417,7 @@ class Register {
                 const SizedBox(
                   height: 24,
                 ),*/
-            // نوع ٍثبت نام (کاربر معمولی و مجموعه دار)
+                // نوع ٍثبت نام (کاربر معمولی و مجموعه دار)
                 BlocBuilder(
                     bloc: createPassword,
                     builder: (context, state) {
@@ -423,6 +443,16 @@ class Register {
                       }
                       return const SizedBox();
                     }),
+                const SizedBox(
+                  height: 24,
+                ),
+                TextFieldWidget(
+                  controller: nameEtc,
+                  labelText: "نام و نام خانوادگی",
+                  textAlign: TextAlign.left,
+                  inputTextDirection: TextDirection.ltr,
+                  noSpaces: true,
+                ),
                 const SizedBox(
                   height: 24,
                 ),
@@ -469,23 +499,43 @@ class Register {
                 const SizedBox(
                   height: 8,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Get.offAll(() => const Homescreen());
+
+                BlocConsumer(
+                  bloc: signUpFinish,
+                  builder: (context, state) {
+                    return MyCustomButton(
+                      height: 58.h,
+                      title: "ثبت نام در جیم‌جیبی",
+                      loading: state is SignUpSendInfoLoadingState,
+                      width: MediaQuery.of(context).size.width,
+                      borderRadius: 8,
+                      onTap: () {
+                        if(nameEtc.text.length>4){
+                          signUpFinish.signUpFinish(
+                            name: nameEtc.text,
+                            pass: controllerCreatePass.text,
+                            token: token,
+                          );
+                        }else{
+                          CustomToast.toast(context, "نام و نام خانوادگی باید بیشتر از 4 کارکتر باشد");
+                        }
+                      },
+                    );
                   },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: cMain,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8))),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    width: double.infinity,
-                    child: Center(
-                      child: Text("ثبت نام در جیم‌جیبی", style: buttonLG),
-                    ),
-                  ),
+                  listener: (context, state) {
+                    if (state is SignUpSendInfoSuccessState) {
+                      Navigator.pop(context);
+                      Get.offAll(() => const Homescreen());
+                      nameEtc.clear();
+                      controllerCreatePass.clear();
+                    }
+                    if (state is SignUpSendInfoFailState) {
+                      // sendPhoneViewModel.emit(SignUpSendPhoneInitialState());
+                      print(state.message);
+                    }
+                  },
                 ),
+
                 const SizedBox(
                   height: 32,
                 ),

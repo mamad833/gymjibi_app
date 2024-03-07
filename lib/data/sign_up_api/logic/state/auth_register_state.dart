@@ -1,18 +1,62 @@
 import 'package:equatable/equatable.dart';
 
-abstract class SignUpBaseState extends Equatable {
+abstract class SignUpSendPhoneBaseState extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class SignUpInitialState extends SignUpBaseState {}
+class SignUpSendPhoneInitialState extends SignUpSendPhoneBaseState {}
 
-class SignUpLoadingState extends SignUpBaseState {}
+class SignUpSendPhoneLoadingState extends SignUpSendPhoneBaseState {}
 
-class SignUpSuccessState extends SignUpBaseState {}
+class SignUpSendPhoneSuccessState extends SignUpSendPhoneBaseState {}
 
-class SignUpFailState extends SignUpBaseState {
+class SignUpSendPhoneFailState extends SignUpSendPhoneBaseState {
   final String message;
 
-  SignUpFailState({required this.message});
+  SignUpSendPhoneFailState({required this.message});
+}
+
+
+
+
+abstract class SignUpSendCodeBaseState extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class SignUpSendCodeInitialState extends SignUpSendPhoneBaseState {}
+
+class SignUpSendCodeLoadingState extends SignUpSendPhoneBaseState {}
+
+class SignUpSendCodeSuccessState extends SignUpSendPhoneBaseState {
+  final String token;
+
+  SignUpSendCodeSuccessState({required this.token});
+}
+
+class SignUpSendCodeFailState extends SignUpSendPhoneBaseState {
+  final String message;
+
+  SignUpSendCodeFailState({required this.message});
+}
+
+
+
+
+abstract class SignUpSendInfoBaseState extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class SignUpSendInfoInitialState extends SignUpSendInfoBaseState {}
+
+class SignUpSendInfoLoadingState extends SignUpSendInfoBaseState {}
+
+class SignUpSendInfoSuccessState extends SignUpSendInfoBaseState {}
+
+class SignUpSendInfoFailState extends SignUpSendInfoBaseState {
+  final String message;
+
+  SignUpSendInfoFailState({required this.message});
 }

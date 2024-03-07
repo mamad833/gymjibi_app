@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gymjibi/config/hive_service/hive_service.dart';
 import 'package:gymjibi/data/profile_user_api/bloc/state/profile_user_state.dart';
 import 'package:gymjibi/data/profile_user_api/model/response/respose_panel_user.dart';
 
@@ -21,6 +22,9 @@ class GetPanelUserViewModel extends Cubit<ProfileUserBaseState> {
     try {
 
       print("4");
+      print("#############");
+      print(HiveServices.getToken);
+      print("#############");
       var response =
       await inject<WebService>().dio.get("users/panel");
       PanelProfileUserResponse profileUser=PanelProfileUserResponse.fromJson(response.data);
