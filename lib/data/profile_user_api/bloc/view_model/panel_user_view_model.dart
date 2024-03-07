@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gymjibi/config/hive_service/hive_service.dart';
@@ -25,6 +27,14 @@ class GetPanelUserViewModel extends Cubit<ProfileUserBaseState> {
       print("#############");
       print(HiveServices.getToken);
       print("#############");
+      inject<WebService>().initialOrUpdate(
+        header: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          "accept": "application/json",
+          if (HiveServices.getToken != null)
+            HttpHeaders.authorizationHeader: "Bearer ${HiveServices.getToken}"
+        },
+      );
       var response =
       await inject<WebService>().dio.get("users/panel");
       PanelProfileUserResponse profileUser=PanelProfileUserResponse.fromJson(response.data);

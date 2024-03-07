@@ -74,6 +74,14 @@ class SignUpSendInfoViewModel extends Cubit<SignUpSendInfoBaseState> {
       });
       print("****************");
       print(response.statusCode);
+      inject<WebService>().initialOrUpdate(
+        header: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          "accept": "application/json",
+          if (HiveServices.getToken != null)
+            HttpHeaders.authorizationHeader: "Bearer ${HiveServices.getToken}"
+        },
+      );
       emit(SignUpSendInfoSuccessState());
       HiveServices.addToken(response.data['token']);
       print("03");
